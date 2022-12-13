@@ -10,7 +10,7 @@ db_path = join('pledge/database/')
 break_command = 'stop'
 
 
-def create_database(db_path):
+def create_database(db_path): #สร้างที่เก็บข้อมูล
     if not exists(join(db_path)):
         mkdir(join(db_path))
         print("Database Created!")
@@ -18,17 +18,17 @@ def create_database(db_path):
         print('Database already exist!')
 
 
-def csv_encoder(data):
+def csv_encoder(data): #แปลงdict เป็น str
     result = ''
     for i in data.keys():
         result += data[i] + ', '
     return result[:-2]
 
 
-def csv_decoder(data):
+def csv_decoder(data): #แปลงstr เปน list
     data = str(data)[2:-1].split(', ')
 
-    d_weight = '{0:,.2f}'.format(round(float(data[0]), 2)) + ' ' + 'Kg'
+    d_weight = '{0:,.2f}'.format(round(float(data[0]), 2)) + ' ' + 'g'
 
     d_type = data[1]
 
@@ -85,7 +85,6 @@ def add_time(serial, time_in):
     current_time.append(time_in)
     db['timestorage_'+serial] = csv_time_encoder(current_time)
     print('Time Added')
-    # print(db['timestorage_'+serial])
 
 
 def csv_time_encoder(data):
@@ -102,28 +101,6 @@ def csv_time_decoder(data):
     return data
 
 
-def read_data(serial_num):
-    k = input('Enter Serial-Number to explore: ')
-    if k == '':
-        return print('Please enter the data')
-    elif k not in db:
-        return print('Please enter the valid data!')
-    elif k == break_command:
-        return
-
-    text_out = csv_decoder(db[serial_num])
-    print()
-    print('*'*15 + ' ' + k + ' ' + '*'*15)
-    for i in text_out.items():
-
-        print('   ', end='')
-        if len(i[0])+1 < 5:
-            print(*i, sep=':\t\t')
-        else:
-            print(*i, sep=':\t')
-    print('*'*(32+len(k)))
-
-
 def remove_data(key):
     del db[key]
     del db['timestorage_'+key]
@@ -135,35 +112,6 @@ def sync_data():
     global db
     db.close()
     db = dbm.open(join(db_path, 'mydata'), 'c')
-
-
-def db_main(db):
-    text_in = input('Trigger : ')
-    if '1' == text_in:
-        new_data()
-    elif '2' == text_in:
-        read_data()
-    elif '3' == text_in:
-        print()
-        for i in sorted(db.keys()):
-            text_out = str(i)[2:-1]
-            print('\t', text_out)
-    elif '4' == text_in:
-        for i in sorted(db.keys()):
-            text_out = str(i)[2:-1] + '\t: ' + str(db[i])[2:-1]
-            print(text_out)
-    elif 'end' == text_in:
-        return False
-    elif 'clear' == text_in:
-        for i in db.keys():
-            del db[i]
-    elif 'del' in text_in:
-        text_in = text_in.split()
-        remove_data(text_in[1])
-    else:
-        print('Try Again')
-    print()
-    return True
 
 
 class openinp:
@@ -318,17 +266,6 @@ def calc_interest(value):
     else:
         interest = value * 0.02
     return '{0:,.2f}'.format(round(interest, 2)) + ' ' + 'Baht'
-
-
-def run_app():
-    '''Trigger all of function to run to application'''
-    create_database(db_path)
-    global db
-
-    temp = True
-    while temp:
-        with dbm.open(join(db_path, 'mydata'), 'c') as db:
-            temp = db_main(db)
 
 
 def run_gui():
