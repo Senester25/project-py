@@ -105,7 +105,7 @@ def remove_data(key):
     del db[key]
     del db['timestorage_'+key]
     sync_data()
-    print(key, 'deleted')
+    print(key, 'remove')
 
 
 def sync_data():
@@ -261,7 +261,7 @@ class viewdata:
 
 def calc_interest(value):
     value = float(value.replace(' Baht', '').replace(',', ''))
-    if value >= 10000:
+    if value <= 10000:
         interest = value * 0.03
     else:
         interest = value * 0.02
