@@ -2,13 +2,12 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from os import mkdir
-from os.path import exists, abspath, dirname, join
+from os.path import exists, join
 import dbm
 
 
 db_path = join('pledge/database/')
-break_command = 'stop'
-
+break_command = "stop"
 
 def create_database(db_path): #สร้างที่เก็บข้อมูล
     if not exists(join(db_path)):
@@ -56,13 +55,13 @@ def new_data(data_in):
         elif serial_number == break_command:
             return
 
-        saul_goodman, in_data_command = [], ['Weight', 'Type', 'Value']
+        temp, in_data_command = [], ['Weight', 'Type', 'Value']
         for i in range(3):
             in_str = in_data_command[i] + ': '
             temp_in = input(in_str)
             if temp_in == break_command:
                 return
-            saul_goodman += [temp_in]
+            temp += [temp_in]
 
     serial_number, i_weight, i_type, i_value = data_in
 
@@ -84,6 +83,7 @@ def add_time(serial, time_in):
     current_time = csv_time_decoder(db['timestorage_'+serial])
     current_time.append(time_in)
     db['timestorage_'+serial] = csv_time_encoder(current_time)
+    sync_data()
     print('Time Added')
 
 
